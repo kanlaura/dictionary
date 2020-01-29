@@ -31,7 +31,7 @@ function createBox(alldata) {
         if (alldata[i].phonetic) {
             phonetic = alldata[i].phonetic;
         } else {
-            phonetic = `<p><i>someone forgot to tell, how pronounce it</i></p>`
+            phonetic = `<p><i>someone forgot to tell, how to pronounce it</i></p>`
         }
 
         

@@ -10,11 +10,6 @@ app.use('/api/words', words);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-
-
-
-
-
 const PORT = process.env.port || 3000;
 
 app.listen(PORT, () => {

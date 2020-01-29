@@ -11,7 +11,14 @@ router.route('/:word').get(function (req, res, next) {
     `)
     .then(res => res.json())
     .then(data => {
-        // let sana = data[0].word;
         res.send(data)
     })
+})
+
+router.route('/:word/triggers').get(async function (req, res, next) {
+    let word = req.params.word;
+
+    const response = await fetch(`https://api.datamuse.com/words?sp=${word}`)
+    const data = await response.json();
+    res.send(data);
 })

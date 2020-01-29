@@ -4,10 +4,13 @@ const results = document.getElementById('results');
 
 button.addEventListener('click', getWord);
 
+
 function getWord(e) {
+    let trimmed = (word.value).trim();
+    let input = trimmed.replace(/[\s]+/g, "-");
     results.innerHTML = '';
     e.preventDefault();
-    fetch(`http://localhost:3000/api/words/${word.value}`)
+    fetch(`http://localhost:3000/api/words/${input}`)
         .then(res => res.json())
         .then(data => {
             console.log(data)
@@ -21,17 +24,45 @@ function getWord(e) {
 function createBox(alldata) {
     for (let i = 0; i < alldata.length; i++) {
         const header = alldata[i].word;
-        const phonetic = alldata[i].phonetic;
-        const meanings = Object.keys(alldata[i].meaning);
-        let noun = meanings[0]
-        let nouns;
+        
+        let phonetic;
+        if (alldata[i].phonetic) {
+            phonetic = alldata[i].phonetic;
+        } else {
+            phonetic = `<p><i>someone forgot to tell, how pronounce it</i></p>`
+        }
 
-        let verb = meanings[1]
+        const nouns = alldata[i].meaning["noun"];
+        let noun = '';
+        if (nouns) {
+            for (let item of nouns) {
+                if (item["definition"]) {
+                    noun += `<li>${item["definition"]}</li>`;
+                }
 
-        for (let j = 0; j < noun.length; j++) {
-            nouns += ` ${noun[j]}`;
-            console.log(nouns)
-            
+            }
+        }
+
+        const verbs = alldata[i].meaning["transitive verb"];
+        let verb = '';
+        if (verbs) {
+            for (let item of verbs) {
+                if (item["definition"]) {
+                    verb += `<li>${item["definition"]}</li>`;
+                }
+
+            }
+        }
+
+        const abrvs = alldata[i].meaning["abbreviation"];
+        let abrv = '';
+        if (abrvs) {
+            for (let item of abrvs) {
+                if (item["definition"]) {
+                    abrv += `<li>${item["definition"]}</li>`;
+                }
+
+            }
         }
 
         let newBox = document.createElement('div');
@@ -45,15 +76,30 @@ function createBox(alldata) {
 
         let rightBox = document.createElement('div');
         rightBox.classList.add('right');
-        
-        headBox.innerHTML = `<h2>${header}</h2><p>${phonetic}</p>`;
-        leftBox.innerHTML = `<p>${noun}</p>`;
-        rightBox.innerHTML = `<p>${verb}</p>`;
-        
+
+        let abreBox = document.createElement('div');
+        abreBox.classList.add('abre');
+
+        headBox.innerHTML = `<h2>${header}</h2>`;
+        headBox.innerHTML += `<p id"phonetic">${phonetic}</p>`;
+
+        if (nouns) {
+            leftBox.innerHTML = `<h4>Nouns</h4><ul>${noun}</ul>`;
+        }
+
+        if (verb) {
+            rightBox.innerHTML = `<h4>Verbs</h4><ul>${verb}</ul>`;
+        }
+
+        if (abrv) {
+            abreBox.innerHTML = `<h4>Abrevs</h4><ul>${abrv}</ul>`;
+        }
+
 
         results.appendChild(newBox);
         newBox.appendChild(headBox);
         newBox.appendChild(leftBox);
         newBox.appendChild(rightBox);
+        newBox.appendChild(abreBox);
     }
 }
